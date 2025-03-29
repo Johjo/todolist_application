@@ -63,5 +63,8 @@ def main():
     else:
         st.write("Aucune tâche pour le moment.")
 
+    # Forcer le rafraîchissement de la page après l'ajout d'une tâche
+    st.experimental_rerun()
+
 if __name__ == "__main__":
     main()
