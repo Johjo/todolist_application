@@ -107,7 +107,7 @@ class TaskPresentation:
 
 @dataclass()
 class AllTasksPresentation:
-    tasks: list[TaskPresentation]
+    tasks: tuple[TaskPresentation, ...]
 
 
 class AllTaskPort(ABC):

@@ -43,9 +43,10 @@ class SqliteSdk:
 
     def all_open_tasks(self, user_key: str, todolist_key: UUID):
         cursor = self._connection.cursor()
+
         cursor.execute(
-            "SELECT task_key, Task.name as name, is_open, execution_date FROM Task INNER JOIN Todolist on Task.todolist_id = Todolist.id WHERE Todolist.user_key = ? and Todolist.todolist_key = ? and is_open = ?",
-            (user_key, todolist_key.hex, True))
+            "SELECT task_key, Task.name as name, is_open, execution_date FROM Task INNER JOIN Todolist on Task.todolist_id = Todolist.id WHERE Todolist.todolist_key = ? AND is_open = ? ", (todolist_key.hex, True)
+            )
         return [self.to_task(row) for row in cursor.fetchall()]
 
     def todolist_by(self, user_key: str, todolist_key: UUID) -> Todolist:

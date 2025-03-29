@@ -7,7 +7,7 @@ from todolist_application.infra.sqlite.sdk import SqliteSdk
 from todolist_application.infra.sqlite.type import FvpSession as FvpSessionSdk
 
 
-class SessionSqlite(FvpSessionSetPort):
+class FvpSessionSqlite(FvpSessionSetPort):
     def __init__(self, connection: sqlite3.Connection):
         self._sdk = SqliteSdk(connection)
 

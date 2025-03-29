@@ -8,8 +8,6 @@ from todolist_hexagon.fvp.read.which_task import TodolistPort, WhichTaskFilter
 from todolist_hexagon.query_dependencies import QueryAdapterDependenciesPort
 from todolist_hexagon.shared.type import UserKey
 
-from todolist_application.secondary.fvp.read.which_task.todolist_sqlite import TodolistSqlite
-
 
 class BaseTestTodolist:
     def test_should_list_open_tasks(self, sut: TodolistPort, fake: TodolistFaker, current_user: UserKey):
@@ -137,3 +135,4 @@ class BaseTestTodolist:
     @pytest.fixture
     def current_user(self, fake: TodolistFaker) -> UserKey:
         return UserKey(fake.a_user_key())
+

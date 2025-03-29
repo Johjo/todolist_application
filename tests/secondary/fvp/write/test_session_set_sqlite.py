@@ -3,11 +3,13 @@ import sqlite3
 import pytest
 from src.todolist_hexagon.src.todolist_hexagon.write_adapter_dependencies import WriteAdapterDependenciesPort
 from todolist_hexagon.fvp.aggregate import FvpSnapshot, FvpSessionSetPort
+from todolist_hexagon.todolist.port import TaskKeyGeneratorPort, TodolistSetPort
 
 from tests.secondary.fvp.write.base_test_session_set import BaseTestFvpSessionSet
 from todolist_application.infra.sqlite.sdk import SqliteSdk
-from todolist_application.infra.sqlite.type import FvpSession as FvpSessionSdk
-from todolist_application.secondary.fvp.write.session_set_sqlite import SessionSqlite
+from todolist_application.infra.sqlite.type import FvpSession as FvpSessionSdk, FvpSession
+from todolist_application.secondary.fvp.write.fvp_session_set_sqlite import FvpSessionSqlite
+from todolist_application.write_adapter_dependencies_for_demo import WriteAdapterDependenciesForDemo
 
 
 @pytest.fixture()
@@ -16,6 +18,17 @@ def connection():
     sdk = SqliteSdk(connection)
     sdk.create_tables()
     return connection
+
+
+class WriteAdapterDependenciesForProd(WriteAdapterDependenciesPort):
+    def todolist_set(self) -> TodolistSetPort:
+        pass
+
+    def task_key_generator(self) -> TaskKeyGeneratorPort:
+        pass
+
+    def fvp_session_set(self) -> FvpSessionSetPort:
+        pass
 
 
 class TestFvpSessionSetSqlite(BaseTestFvpSessionSet):
@@ -30,10 +43,6 @@ class TestFvpSessionSetSqlite(BaseTestFvpSessionSet):
                                                                      snapshot.task_priorities.items()]))
 
     @pytest.fixture
-    def dependencies(self) -> WriteAdapterDependenciesPort:
-        raise Exception("implement there")
-        #
-        # dependencies = Dependencies.create_empty()
-        # dependencies = dependencies.feed_adapter(FvpSessionSetPort, SessionSqlite.factory)
-        # dependencies = dependencies.feed_infrastructure(sqlite3.Connection, lambda _: self._connection)
-        # return dependencies
+    def sut(self) -> FvpSessionSetPort:
+        return FvpSessionSqlite(connection=self._connection)
+

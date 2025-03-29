@@ -14,7 +14,7 @@ from todolist_application.read.todolist.port import TaskPresentation, TodolistSe
 def map_to_task_presentation(task: TaskSdk) -> TaskPresentation:
     return TaskPresentation(key=TaskKey(task.key),
                 name=TaskName(task.name),
-                is_open=TaskOpen(task.is_open),
+                open=TaskOpen(task.is_open),
                 execution_date=task.execution_date.default_value(None))
 
 

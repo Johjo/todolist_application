@@ -5,9 +5,8 @@ from todolist_application.infra.memory import Memory
 
 
 class TodolistInMemory(TodolistPort):
-    def __init__(self, memory: Memory, user_key: str):
+    def __init__(self, memory: Memory):
         self.memory = memory
-        self._user_key = user_key
 
     def all_open_tasks(self, user_key: UserKey, task_filter: WhichTaskFilter) -> list[Task]:
         tasks = [task for task in self.memory.all_tasks(todolist_key=task_filter.todolist_key)

@@ -7,6 +7,7 @@ from src.todolist_hexagon.src.use_case_dependencies import AdapterDependenciesPo
 from todolist_hexagon.builder import a_task_key
 from todolist_hexagon.builder import FvpFaker
 from todolist_hexagon.fvp.aggregate import FvpSnapshot, FvpSessionSetPort
+from todolist_hexagon.read_adapter_dependencies import ReadAdapterDependenciesPort
 from todolist_hexagon.shared.type import TaskKey, UserKey
 
 
@@ -45,13 +46,7 @@ class BaseTestFvpSessionSet(ABC):
         pass
 
     @pytest.fixture
-    def sut(self, dependencies: AdapterDependenciesPort) -> FvpSessionSetPort:
-        raise Exception("implement there")
-        #
-        # return dependencies.get_adapter(FvpSessionSetPort)
-
-    @pytest.fixture
-    def dependencies(self) -> AdapterDependenciesPort:
+    def sut(self) -> FvpSessionSetPort:
         raise NotImplementedError()
 
     @pytest.fixture()

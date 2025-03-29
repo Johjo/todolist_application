@@ -3,9 +3,10 @@ from datetime import date
 import pytest
 from dateutil.utils import today
 from src.todolist_hexagon.src.todolist_hexagon.read_adapter_dependencies import ReadAdapterDependenciesPort
-from todolist_hexagon.builder import TodolistFaker, TodolistBuilder
+from todolist_hexagon.builder import TodolistFaker, TodolistBuilder, TaskBuilder
 
-from todolist_application.read.todolist.port import TodolistSetReadPort, TaskFilter, Include, Word, Exclude
+from todolist_application.read.todolist.port import TodolistSetReadPort, TaskFilter, Include, Word, Exclude, \
+    TaskPresentation
 
 
 class BaseTestTodolistSetRead:
@@ -14,14 +15,14 @@ class BaseTestTodolistSetRead:
         todolist = fake.a_todolist().having(tasks=[fake.a_task(), expected_task, fake.a_task()])
         self.feed_todolist(user_key=current_user, todolist=todolist)
 
-        assert sut.task_by(todolist_key=todolist.to_key(), task_key=expected_task.to_key()) == expected_task.to_presentation()
+        assert sut.task_by(todolist_key=todolist.to_key(), task_key=expected_task.to_key()) == self.to_presentation(expected_task)
 
     def test_read_task_having_execution_date(self, sut: TodolistSetReadPort, fake: TodolistFaker, current_user: str):
         expected_task = fake.a_task().having(execution_date=today().date())
         todolist = fake.a_todolist().having(tasks=[fake.a_task(), expected_task, fake.a_task()])
         self.feed_todolist(user_key=current_user, todolist=todolist)
 
-        assert sut.task_by(todolist_key=todolist.to_key(), task_key=expected_task.to_key()) == expected_task.to_presentation()
+        assert sut.task_by(todolist_key=todolist.to_key(), task_key=expected_task.to_key()) == self.to_presentation(expected_task)
 
     def test_read_all_by_name(self, sut: TodolistSetReadPort, fake: TodolistFaker, current_user: str):
         todolist_1 = fake.a_todolist()
@@ -62,7 +63,7 @@ class BaseTestTodolistSetRead:
 
         actual = sut.all_tasks(task_filter)
 
-        assert actual == [task.to_presentation() for task in expected_tasks]
+        assert actual == [self.to_presentation(task) for task in expected_tasks]
 
     def test_read_all_postponed_tasks(self, sut: TodolistSetReadPort, fake: TodolistFaker, current_user: str):
         expected_tasks = [fake.a_task().having(execution_date=date(2018, 10, 17)),
@@ -74,21 +75,20 @@ class BaseTestTodolistSetRead:
 
         actual = sut.all_tasks_postponed_task(todolist_key=todolist.to_key())
 
-        assert actual == [task.to_presentation() for task in expected_tasks]
+        assert actual == [self.to_presentation(task) for task in expected_tasks]
 
     @pytest.fixture
     def current_user(self, fake: TodolistFaker) -> str:
-        return fake.a_user_key()
+        return "any user"
+        # todo : return fake.a_user_key()
 
     @pytest.fixture
-    def sut(self, dependencies: ReadAdapterDependenciesPort) -> TodolistSetReadPort:
-        raise Exception("implement there")
-        #
-        # return dependencies.get_adapter(TodolistSetReadPort)
-
-    @pytest.fixture
-    def dependencies(self, current_user: str) -> ReadAdapterDependenciesPort:
-        raise NotImplementedError() # pragma: no cover
+    def sut(self) -> TodolistSetReadPort:
+        raise NotImplementedError()
 
     def feed_todolist(self, user_key: str, todolist: TodolistBuilder):
         raise NotImplementedError() # pragma: no cover
+
+    @staticmethod
+    def to_presentation(expected_task: TaskBuilder) -> TaskPresentation:
+        return TaskPresentation(key=expected_task.to_key(), name=expected_task.to_name(), open=expected_task.to_open(), execution_date=expected_task.to_execution_date().default_value(None))

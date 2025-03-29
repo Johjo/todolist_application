@@ -4,7 +4,7 @@ from uuid import uuid4, UUID
 import pytest
 from faker import Faker
 from todolist_hexagon.builder import TodolistFaker
-from todolist_hexagon.shared.type import TaskExecutionDate, TaskOpen, TaskName, TaskKey
+from todolist_hexagon.shared.type import TaskExecutionDate
 
 from todolist_application.infra.memory import Memory
 from todolist_application.secondary.todolist.read.all_tasks.all_tasks_in_memory import AllTaskInMemory
@@ -14,16 +14,18 @@ from todolist_application.secondary.todolist.read.all_tasks.all_tasks_in_memory 
 def fake() -> TodolistFaker:
     return TodolistFaker(Faker())
 
-@dataclass
+
+@dataclass(frozen=True, eq=True)
 class TaskPresentation:
     key: UUID
     name: str
     open: bool
     execution_date: TaskExecutionDate | None
 
-@dataclass
+
+@dataclass(frozen=True, eq=True)
 class AllTasksPresentation:
-    tasks: list[TaskPresentation]
+    tasks: tuple[TaskPresentation, ...]
 
 
 def test_xxx(fake: TodolistFaker):
@@ -40,8 +42,8 @@ def test_xxx(fake: TodolistFaker):
     actual = sut.all_tasks(todolist_key=todolist.to_key())
 
     # THEN
-    assert actual == AllTasksPresentation(tasks=[
+    assert str(actual) == str(AllTasksPresentation(tasks=(
         TaskPresentation(key=task_one.to_key(), name=task_one.to_name(), open=False,
                          execution_date=task_one.to_execution_date().value),
         TaskPresentation(key=task_two.to_key(), name=task_two.to_name(), open=True, execution_date=None),
-    ])
+    )))

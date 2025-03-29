@@ -19,7 +19,7 @@ class TodolistSetReadInMemory(TodolistSetReadPort):
 
     @staticmethod
     def _to_task_presentation(task):
-        return TaskPresentation(key=task.key, name=task.name, is_open=task.is_open,
+        return TaskPresentation(key=task.key, name=task.name, open=task.is_open,
                                 execution_date=task.execution_date.default_value(None))
 
     def all_by_name(self) -> list[TodolistName]:

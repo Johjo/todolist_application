@@ -2,11 +2,12 @@ import sqlite3
 
 import pytest
 from faker import Faker
-from src.todolist_hexagon.src.todolist_hexagon.read_adapter_dependencies import ReadAdapterDependenciesPort
-from todolist_hexagon.builder import TodolistFaker, TodolistBuilder
+from todolist_hexagon.builder import TodolistFaker, TodolistBuilder, TaskBuilder
 
 from tests.secondary.todolist.todolist_set_read.base_test_todolist_set_read import BaseTestTodolistSetRead
 from todolist_application.infra.sqlite.sdk import SqliteSdk
+from todolist_application.infra.sqlite.type import Todolist, Task
+from todolist_application.read.todolist.port import TodolistSetReadPort
 from todolist_application.secondary.todolist.todolist_set_read.todolist_set_read_sqlite import TodolistSetReadSqlite
 
 
@@ -23,15 +24,19 @@ class TestTodolistSetReadSqlite(BaseTestTodolistSetRead):
         self.sdk.create_tables()
 
     @pytest.fixture
-    def dependencies(self, current_user: str) -> ReadAdapterDependenciesPort:
-        raise Exception("implement there")
+    def sut(self) -> TodolistSetReadPort:
+        return TodolistSetReadSqlite(connection=self._connection, user_key="any user")
 
-        # all_dependencies = Dependencies.create_empty()
-        # all_dependencies = all_dependencies.feed_adapter(TodolistSetReadPort, TodolistSetReadSqlite.factory)
-        # all_dependencies = all_dependencies.feed_infrastructure(sqlite3.Connection, lambda _: self._connection)
-        # all_dependencies = all_dependencies.feed_data(data_name=USER_KEY, value=current_user)
-        # return all_dependencies
 
     def feed_todolist(self, user_key: str, todolist: TodolistBuilder) -> None:
-        self.sdk.upsert_todolist(user_key=user_key, todolist=todolist.to_sqlite_sdk(),
-                                 tasks=[task.to_sqlite_sdk() for task in todolist.to_tasks()])
+        self.sdk.upsert_todolist(user_key=user_key, todolist=self.todolist_to_sqlite(todolist),
+                                 tasks=[self.task_to_sqlite(task) for task in todolist.to_tasks()])
+
+    @staticmethod
+    def todolist_to_sqlite(todolist: TodolistBuilder) -> Todolist:
+        return Todolist(key=todolist.to_key(), name=todolist.to_name())
+
+    @staticmethod
+    def task_to_sqlite(task: TaskBuilder) -> Task:
+        return Task(key=task.to_key(), name=task.to_name(), is_open=task.to_open(),
+                    execution_date=task.to_execution_date())

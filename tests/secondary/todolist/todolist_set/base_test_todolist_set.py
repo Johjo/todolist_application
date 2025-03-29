@@ -98,17 +98,15 @@ class BaseTestTodolistSet:
         assert sut.by(todolist_key=todolist.to_key()) == Nothing
 
     @pytest.fixture
-    def sut(self, dependencies: WriteAdapterDependenciesPort) -> TodolistSetPort:
-        raise Exception("implement there")
-        # return dependencies.get_adapter(TodolistSetPort)
+    def sut(self) -> TodolistSetPort:
+        raise NotImplementedError
 
-    @pytest.fixture
-    def dependencies(self, current_user: str) -> WriteAdapterDependenciesPort:
-        raise NotImplementedError()
+
 
     @pytest.fixture
     def current_user(self, fake: TodolistFaker) -> str:
-        return fake.a_user_key()
+        # todo : return a fake user key
+        return "any user"
 
     def feed_todolist(self, user_key: str, todolist: TodolistBuilder) -> None:
         raise NotImplementedError()
