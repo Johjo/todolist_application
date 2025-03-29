@@ -35,42 +35,58 @@ class WriteAdapterDependencies(WriteAdapterDependenciesPort):
 memory = Memory()
 dependencies = WriteAdapterDependencies(memory)
 
-UseCaseDependencies(adapter_dependencies=dependencies).create_todolist().execute(todolist_key=TodolistKey(UUID(int=1)), todolist_name=TodolistName("test"))
+def create_todolist(todolist_name: str) -> None:
+    create_todolist_use_case = UseCaseDependencies(adapter_dependencies=dependencies).create_todolist()
+    todolist_key = TodolistKey(uuid4())
+    create_todolist_use_case.execute(todolist_key=todolist_key, todolist_name=TodolistName(todolist_name))
+    return todolist_key
 
-def add_task(task: str) -> None:
-    print("add task")
+def add_task(task: str, todolist_key: TodolistKey) -> None:
     open_task = UseCaseDependencies(adapter_dependencies=dependencies).open_task()
-    print(open_task.execute(todolist_key=TodolistKey(UUID(int=1)), task_key=TaskKey(uuid4()), name=TaskName(task)))
+    open_task.execute(todolist_key=todolist_key, task_key=TaskKey(uuid4()), name=TaskName(task))
 
-def list_task() -> list[TaskSnapshot]:
-    tasks = memory.all_tasks(todolist_key=TodolistKey(UUID(int=1)))
+def list_task(todolist_key: TodolistKey) -> list[TaskSnapshot]:
+    tasks = memory.all_tasks(todolist_key=todolist_key)
     return tasks
 
 def main():
     st.set_page_config(page_title="Todo List", page_icon="✅", layout="wide")
-    @st.fragment
-    def page():
-        st.title("Ma Liste de Tâches")
+
+    # Page de sélection/création de todolist
+    st.title("Mes Todolists")
+    
+    # Option de création de nouvelle todolist
+    new_todolist_name = st.text_input("Créer une nouvelle todolist")
+    if st.button("Créer"):
+        todolist_key = create_todolist(new_todolist_name)
+        st.session_state['current_todolist'] = todolist_key
+
+    # Liste des todolists existantes
+    st.header("Mes Todolists")
+    todolists = memory.all_todolist_by_user
+    for (user, key), todolist in todolists.items():
+        if st.button(f"Ouvrir {todolist.name}"):
+            st.session_state['current_todolist'] = key
+
+    # Page de gestion de todolist si une todolist est sélectionnée
+    if 'current_todolist' in st.session_state:
+        st.title(f"Todolist : {todolists[('any user', st.session_state['current_todolist'])].name}")
 
         # Section pour ajouter une nouvelle tâche
         st.header("Ajouter une tâche")
         new_task = st.text_input("Entrez une nouvelle tâche")
         if st.button("Ajouter la tâche"):
-            print("test")
-            add_task(new_task)
-            st.rerun(scope="fragment")
+            add_task(new_task, st.session_state['current_todolist'])
+            st.rerun()
 
         # Section pour afficher les tâches
         st.header("Mes Tâches")
-        tasks = list_task()
+        tasks = list_task(st.session_state['current_todolist'])
         if tasks:
             for task in tasks:
                 st.write(f"- {task.name}")
         else:
             st.write("Aucune tâche pour le moment.")
-
-    page()
-
 
 if __name__ == "__main__":
     main()
