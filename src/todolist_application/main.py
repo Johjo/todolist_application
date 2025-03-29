@@ -56,7 +56,12 @@ def main():
     
     # Section pour afficher les tâches
     st.header("Mes Tâches")
-    st.write("Aucune tâche pour le moment.")
+    tasks = list_task()
+    if tasks:
+        for task in tasks:
+            st.write(f"- {task.name}")
+    else:
+        st.write("Aucune tâche pour le moment.")
 
 if __name__ == "__main__":
     main()
