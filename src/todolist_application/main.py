@@ -2,7 +2,7 @@ from uuid import UUID, uuid4
 
 import streamlit as st
 from todolist_hexagon.fvp.aggregate import FvpSessionSetPort
-from todolist_hexagon.shared.type import TodolistKey, TaskKey, TaskName
+from todolist_hexagon.shared.type import TodolistKey, TaskKey, TaskName, TodolistName
 from todolist_hexagon.todolist.aggregate import TaskSnapshot
 from todolist_hexagon.todolist.port import TaskKeyGeneratorPort, TodolistSetPort
 from todolist_hexagon.todolist.write.open_task import OpenTaskUseCase
@@ -35,9 +35,12 @@ class WriteAdapterDependencies(WriteAdapterDependenciesPort):
 memory = Memory()
 dependencies = WriteAdapterDependencies(memory)
 
+UseCaseDependencies(adapter_dependencies=dependencies).create_todolist().execute(todolist_key=TodolistKey(UUID(int=1)), todolist_name=TodolistName("test"))
+
 def add_task(task: str) -> None:
+    print("add task")
     open_task = UseCaseDependencies(adapter_dependencies=dependencies).open_task()
-    open_task.execute(todolist_key=TodolistKey(UUID(int=1)), task_key=TaskKey(uuid4()), name=TaskName(task))
+    print(open_task.execute(todolist_key=TodolistKey(UUID(int=1)), task_key=TaskKey(uuid4()), name=TaskName(task)))
 
 def list_task() -> list[TaskSnapshot]:
     tasks = memory.all_tasks(todolist_key=TodolistKey(UUID(int=1)))
@@ -45,26 +48,29 @@ def list_task() -> list[TaskSnapshot]:
 
 def main():
     st.set_page_config(page_title="Todo List", page_icon="✅", layout="wide")
+    @st.fragment
+    def page():
+        st.title("Ma Liste de Tâches")
 
-    st.title("Ma Liste de Tâches")
+        # Section pour ajouter une nouvelle tâche
+        st.header("Ajouter une tâche")
+        new_task = st.text_input("Entrez une nouvelle tâche")
+        if st.button("Ajouter la tâche"):
+            print("test")
+            add_task(new_task)
+            st.rerun(scope="fragment")
 
-    # Section pour ajouter une nouvelle tâche
-    st.header("Ajouter une tâche")
-    new_task = st.text_input("Entrez une nouvelle tâche")
-    if st.button("Ajouter la tâche"):
-        add_task(new_task)
-    
-    # Section pour afficher les tâches
-    st.header("Mes Tâches")
-    tasks = list_task()
-    if tasks:
-        for task in tasks:
-            st.write(f"- {task.name}")
-    else:
-        st.write("Aucune tâche pour le moment.")
+        # Section pour afficher les tâches
+        st.header("Mes Tâches")
+        tasks = list_task()
+        if tasks:
+            for task in tasks:
+                st.write(f"- {task.name}")
+        else:
+            st.write("Aucune tâche pour le moment.")
 
-    # Forcer le rafraîchissement de la page après l'ajout d'une tâche
-    st.experimental_rerun()
+    page()
+
 
 if __name__ == "__main__":
     main()
