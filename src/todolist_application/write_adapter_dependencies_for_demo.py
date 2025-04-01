@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.todolist_hexagon.src.todolist_hexagon.write_adapter_dependencies import WriteAdapterDependenciesPort
+from todolist_hexagon.write_adapter_dependencies import WriteAdapterDependenciesPort
 from todolist_hexagon.fvp.aggregate import FvpSessionSetPort
 from todolist_hexagon.todolist.port import TodolistSetPort, TaskKeyGeneratorPort
 

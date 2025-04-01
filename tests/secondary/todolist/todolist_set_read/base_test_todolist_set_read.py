@@ -2,7 +2,6 @@ from datetime import date
 
 import pytest
 from dateutil.utils import today
-from src.todolist_hexagon.src.todolist_hexagon.read_adapter_dependencies import ReadAdapterDependenciesPort
 from todolist_hexagon.builder import TodolistFaker, TodolistBuilder, TaskBuilder
 
 from todolist_application.read.todolist.port import TodolistSetReadPort, TaskFilter, Include, Word, Exclude, \

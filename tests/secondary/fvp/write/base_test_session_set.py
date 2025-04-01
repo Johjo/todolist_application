@@ -3,12 +3,10 @@ from collections import OrderedDict
 
 import pytest
 from faker import Faker
-from src.todolist_hexagon.src.use_case_dependencies import AdapterDependenciesPort
-from todolist_hexagon.builder import a_task_key
 from todolist_hexagon.builder import FvpFaker
+from todolist_hexagon.builder import a_task_key
 from todolist_hexagon.fvp.aggregate import FvpSnapshot, FvpSessionSetPort
-from todolist_hexagon.read_adapter_dependencies import ReadAdapterDependenciesPort
-from todolist_hexagon.shared.type import TaskKey, UserKey
+from todolist_hexagon.shared.type import TaskKey
 
 
 class BaseTestFvpSessionSet(ABC):

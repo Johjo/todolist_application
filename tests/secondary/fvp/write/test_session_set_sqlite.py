@@ -1,15 +1,14 @@
 import sqlite3
 
 import pytest
-from src.todolist_hexagon.src.todolist_hexagon.write_adapter_dependencies import WriteAdapterDependenciesPort
+from todolist_hexagon.write_adapter_dependencies import WriteAdapterDependenciesPort
 from todolist_hexagon.fvp.aggregate import FvpSnapshot, FvpSessionSetPort
 from todolist_hexagon.todolist.port import TaskKeyGeneratorPort, TodolistSetPort
 
 from tests.secondary.fvp.write.base_test_session_set import BaseTestFvpSessionSet
 from todolist_application.infra.sqlite.sdk import SqliteSdk
-from todolist_application.infra.sqlite.type import FvpSession as FvpSessionSdk, FvpSession
+from todolist_application.infra.sqlite.type import FvpSession as FvpSessionSdk
 from todolist_application.secondary.fvp.write.fvp_session_set_sqlite import FvpSessionSqlite
-from todolist_application.write_adapter_dependencies_for_demo import WriteAdapterDependenciesForDemo
 
 
 @pytest.fixture()
@@ -22,13 +21,13 @@ def connection():
 
 class WriteAdapterDependenciesForProd(WriteAdapterDependenciesPort):
     def todolist_set(self) -> TodolistSetPort:
-        pass
+        raise NotImplementedError()
 
     def task_key_generator(self) -> TaskKeyGeneratorPort:
-        pass
+        raise NotImplementedError()
 
     def fvp_session_set(self) -> FvpSessionSetPort:
-        pass
+        raise NotImplementedError()
 
 
 class TestFvpSessionSetSqlite(BaseTestFvpSessionSet):

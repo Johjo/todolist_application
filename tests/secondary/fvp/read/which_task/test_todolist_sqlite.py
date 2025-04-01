@@ -23,7 +23,7 @@ class ReadAdapterDependenciesSqlite(ReadAdapterDependenciesPort):
         return TodolistSqlite(user_key=self._user_key, connection=self._connection)
 
     def fvp_session_set(self) -> FvpSessionSetPort:
-        pass
+        raise NotImplementedError()
 
 
 class TestTodolistSqlite(BaseTestTodolist):

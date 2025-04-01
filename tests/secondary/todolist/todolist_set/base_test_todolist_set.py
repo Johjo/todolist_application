@@ -4,9 +4,7 @@ from dateutil.utils import today
 from expression import Nothing, Some
 from faker import Faker
 from todolist_hexagon.builder import TodolistFaker, TodolistBuilder
-
 from todolist_hexagon.todolist.port import TodolistSetPort
-from todolist_hexagon.write_adapter_dependencies import WriteAdapterDependenciesPort
 
 from todolist_application.secondary.todolist.todolist_set.todolist_set_sqlite import TodolistSetSqlite
 

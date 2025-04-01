@@ -1,14 +1,13 @@
 import sqlite3
 
 import pytest
-from src.todolist_hexagon.src.todolist_hexagon.write_adapter_dependencies import WriteAdapterDependenciesPort
 from todolist_hexagon.builder import TodolistBuilder, TaskBuilder
-
 from todolist_hexagon.todolist.port import TodolistSetPort
+
+from tests.secondary.todolist.todolist_set.base_test_todolist_set import BaseTestTodolistSet
 from todolist_application.infra.sqlite.sdk import SqliteSdk
 from todolist_application.infra.sqlite.type import Todolist, Task
 from todolist_application.secondary.todolist.todolist_set.todolist_set_sqlite import TodolistSetSqlite
-from tests.secondary.todolist.todolist_set.base_test_todolist_set import BaseTestTodolistSet
 
 
 class TestTodolistSetSqlite(BaseTestTodolistSet):
